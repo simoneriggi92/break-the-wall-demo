@@ -1,0 +1,45 @@
+{
+  "masks": [
+    {"from": 0, "to": 200, "x": 2850, "y": 296, "w": 1220, "h": 50, "color": "0x0f131b"}
+  ],
+  "gif": { "file": "break-the-wall.gif", "fps": 10, "moments": [
+    {"window": "terminal", "start": 1.0, "end": 3.0, "crop": {"x": 2768, "y": 1606, "w": 1328}, "tag": "CLAUDE", "caption": "Type /break-the-wall in Claude Code"},
+    {"window": "both", "start": 3.8, "end": 5.6, "crop": {"x": 0, "y": 0, "w": 4096, "h": 2498}, "tag": "PAGE", "caption": "Break the Wall opens beside the session"},
+    {"window": "terminal", "start": 9.2, "end": 13.2, "crop": {"x": 2768, "y": 1606, "w": 1328}, "tag": "SKILLS", "caption": "/grill-with-docs: Matt Pocock's skills, in the page"},
+    {"window": "both", "start": 76.0, "end": 78.6, "crop": {"x": 0, "y": 0, "w": 4096, "h": 2498}, "tag": "ROUND", "caption": "The agent's questions arrive in the page"},
+    {"window": "page", "start": 78.8, "end": 81.0, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ROUND", "caption": "One question at a time, with a recommendation"},
+    {"window": "page", "start": 111.4, "end": 114.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ASK", "caption": "Select a passage: remark on it, or ask"},
+    {"window": "page", "start": 132.6, "end": 134.6, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ASK", "caption": "A side chat beside the question"},
+    {"window": "page", "start": 143.2, "end": 145.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ASK", "caption": "A read-only copy of the session answers"},
+    {"window": "page", "start": 149.0, "end": 151.8, "crop": {"x": 0, "y": 0, "w": 2610, "scrollTo": 170, "scrollAt": 0.2, "scrollSpeed": 340}, "tag": "SEND", "caption": "Accept, then send the round"},
+    {"window": "terminal", "start": 152.4, "end": 154.4, "crop": {"x": 2768, "y": 1606, "w": 1328}, "tag": "CLAUDE", "caption": "Only your answers go back to the session"},
+    {"window": "both", "start": 178.6, "end": 181.0, "crop": {"x": 0, "y": 0, "w": 4096, "h": 2498}, "tag": "ROUND", "caption": "Claude sends the next round"},
+    {"window": "page", "start": 312.4, "end": 314.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ROUND", "caption": "Round after round, until nothing is left open"},
+    {"window": "terminal", "start": 422.8, "end": 425.8, "crop": {"x": 2768, "y": 1606, "w": 1328}, "tag": "SPEC", "caption": "/to-spec writes the spec"},
+    {"window": "page", "start": 563.4, "end": 565.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "EXPLORE", "caption": "Its structure, with the source beside it"},
+    {"window": "page", "start": 573.4, "end": 575.6, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "LEVELS", "caption": "Open a part, down to its roles"},
+    {"window": "page", "start": 596.2, "end": 598.2, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "LEVELS", "caption": "Down to the next layer"},
+    {"window": "page", "start": 656.5, "end": 658.5, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "BACKING", "caption": "Every statement without backing, listed"},
+    {"window": "page", "start": 662.5, "end": 664.8, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "REMARK", "caption": "Remark on one: “Never said that”"},
+    {"window": "page", "start": 678.4, "end": 681.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ROUND", "caption": "Claude asks instead of guessing"},
+    {"window": "page", "start": 719.8, "end": 721.2, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "SPEC", "caption": "The revised spec comes back"},
+    {"window": "page", "start": 724.6, "end": 727.6, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "APPROVE", "caption": "Approve it: sent to the agent"}
+  ] },
+  "clips": [
+    { "file": "answer-one-question.webp", "fps": 20, "moments": [
+      {"window": "page", "start": 78.8, "end": 81.0, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ROUND", "caption": "One question at a time, with a recommendation"},
+      {"window": "page", "start": 149.0, "end": 151.8, "crop": {"x": 0, "y": 0, "w": 2610, "scrollTo": 170, "scrollAt": 0.2, "scrollSpeed": 340}, "tag": "SEND", "caption": "Accept, then send the round"},
+      {"window": "terminal", "start": 152.4, "end": 154.4, "crop": {"x": 2768, "y": 1606, "w": 1328}, "tag": "CLAUDE", "caption": "Only your answers go back to the session"}
+    ] },
+    { "file": "ask-beside-the-question.webp", "fps": 20, "moments": [
+      {"window": "page", "start": 111.4, "end": 114.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ASK", "caption": "Select a passage: remark on it, or ask"},
+      {"window": "page", "start": 132.6, "end": 134.6, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ASK", "caption": "A side chat beside the question"},
+      {"window": "page", "start": 143.2, "end": 145.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ASK", "caption": "A read-only copy of the session answers"}
+    ] },
+    { "file": "check-the-spec-then-approve.webp", "fps": 20, "moments": [
+      {"window": "page", "start": 662.5, "end": 664.8, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "REMARK", "caption": "Remark on one: “Never said that”"},
+      {"window": "page", "start": 678.4, "end": 680.4, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "ROUND", "caption": "Claude asks instead of guessing"},
+      {"window": "page", "start": 724.6, "end": 727.6, "crop": {"x": 0, "y": 0, "w": 2610}, "tag": "APPROVE", "caption": "Approve it: sent to the agent"}
+    ] }
+  ]
+}

@@ -81,6 +81,21 @@ Other rules for the cuts file:
 - **Several takes:** a moment from a take other than the first names it with `"take"`.
 - **Example:** [cuts/take2x.json](../../cuts/take2x.json) cuts the trial take of the whole loop.
 
+## Cut a screen recording
+
+A session can also be recorded by hand with macOS's screen recording, the page and the terminal side by side on one screen. `cut-screen.mjs` cuts it into the same media, each moment framed as a window on a colour field with a tagged caption below, in the style of Break the Wall's own README:
+
+```sh
+node tools/media/cut-screen.mjs cuts/screen.json <recording.mov>   # writes media/screen/
+```
+
+The recording is given on the command line and never kept in the repository: the page's address in the terminal carries a session token.
+
+- **Moments:** each names its `window` (`page`, `terminal` or `both`, the title on its frame), a `crop` in the recording's pixels, a `tag` and a `caption`. A crop keeps the window's 16:10 unless it names its height `h`.
+- **Scroll:** a crop can scroll down while its moment plays, so a button below the fold comes into view without zooming in: `"scrollTo": 170, "scrollAt": 0.2, "scrollSpeed": 340`.
+- **Masks:** a mask fills a region of the recording, in its own pixels, for a span of time, before any crop. [cuts/screen.json](../../cuts/screen.json) masks the page's address, with its token, for as long as it shows in the terminal.
+- **Lengths:** a clip lasts 5 to 8 s; the GIF has no bound, since it tells the whole loop.
+
 ## Tests
 
 ```sh
