@@ -17,12 +17,12 @@ public sealed class OrderStore(TimeProvider clock)
         return order;
     }
 
-    // A client asking for another client's order gets nothing, as if it did not exist.
+    // Another client's order is answered as missing, not forbidden, so a client cannot
+    // learn which order ids exist by probing them.
     public Order? Find(string client, Guid id) =>
         orders.TryGetValue(id, out var order) && order.Client == client ? order : null;
 
-    // Removing the exact pair found, not just the id, keeps the ownership check and the
-    // removal one step: nothing can swap the order in between.
+    // Removing the exact pair found ties the removal to the ownership check just made.
     public bool Cancel(string client, Guid id) =>
         Find(client, id) is { } order && orders.TryRemove(new KeyValuePair<Guid, Order>(id, order));
 

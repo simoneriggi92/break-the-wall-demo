@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Json;
 
 namespace Orders.Api.Tests;
 
@@ -35,7 +34,8 @@ public class ApiKeyTests(OrdersApiFactory factory) : IClassFixture<OrdersApiFact
 
         var response = await client.GetAsync("/orders");
 
+        // The host is shared by this class's tests, so only the status is asserted: what the
+        // list holds belongs to OrderTests, which gives each test a fresh host.
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Empty(await response.Content.ReadFromJsonAsync<List<object>>() ?? throw new InvalidDataException());
     }
 }

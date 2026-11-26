@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Orders.Api.ApiKeys;
 
 namespace Orders.Api.Tests;
 
@@ -21,7 +22,7 @@ public class OrdersApiFactory : WebApplicationFactory<Program>
     public HttpClient CreateClient(string apiKey)
     {
         var client = CreateClient();
-        client.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
+        client.DefaultRequestHeaders.Add(ApiKeyMiddleware.HeaderName, apiKey);
         return client;
     }
 }

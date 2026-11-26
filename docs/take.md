@@ -15,13 +15,13 @@ A take is one real Claude Code session in this repository, recorded for Break th
 
 ## Before the take
 
-- A clean profile, in English, with Break the Wall and the round skills from `mattpocock/skills` installed, as Break the Wall's README says.
+- A clean Claude Code profile, in English, with Break the Wall installed from its marketplace (`/plugin marketplace add simoneriggi92/BreakTheWall`, then `/plugin install break-the-wall@break-the-wall`) and the round skills from [mattpocock/skills](https://github.com/mattpocock/skills).
 - The working directory is the root of this repository, on a clean `main`, with no `.scratch/`, `GLOSSARY.md` or `docs/adr/` left from an earlier take.
-- The page in its default theme, at 1280×800.
+- How the take is recorded, and at what size and theme, belongs to the recording, not to these intentions.
 
 ## The person's intentions, in order
 
-1. **Open the page.** In the terminal, type `/break-the-wall`, then open the page at the address it prints.
+1. **Open the page.** In the terminal, type `/break-the-wall`. The page opens in the browser on its own.
 2. **Start the grilling.** In the terminal, type:
 
    ```
@@ -42,13 +42,13 @@ A take is one real Claude Code session in this repository, recorded for Break th
 
    > I never decided this: ask me.
 
-   Send the remark. The agent opens the next round: answer it as point 3 says and send. The agent hands over the revised spec, which opens as a new version.
+   Send the remark. The agent opens the next round: answer it as point 3 says and send. The agent hands over the revised spec, which opens as a new version. If the agent's next round does not show in the page, this is the plugin misbehaving (see below), not a moment to work around.
 8. **Approve.** Approve the new version, even if it still has unbacked or broken statements. The take ends when the page shows the version approved and *Sent to the agent*.
 
 ## When a take cannot follow them
 
 - **No statement is marked unbacked** at point 7. The story cannot be told without staging it. End the take and redo it.
-- **The agent never asks about storage.** Point 3's choice is not part of this take. Cut it anyway if every other moment happened.
+- **The storage choice does not show.** The agent never asks where the counts live, or it recommends in memory itself, so choosing in memory is no exception. The story is missing a moment. Redo the take.
 - **The page or the plugin misbehaves.** Stop the take and file what happened as an issue on Break the Wall. A take is never cut around a defect.
 
 ## After the take

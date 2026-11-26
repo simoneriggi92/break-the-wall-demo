@@ -34,15 +34,16 @@ public sealed class ApiKeyMiddleware(RequestDelegate next, IOptionsMonitor<List<
             return null;
         }
 
-        var presentedBytes = Encoding.UTF8.GetBytes(presented);
+        var presentedHash = SHA256.HashData(Encoding.UTF8.GetBytes(presented));
         ApiKeyEntry? match = null;
 
-        // Every configured key is compared in constant time, and the loop never stops
-        // early, so the response time does not reveal how much of a key was right.
+        // FixedTimeEquals returns at once on inputs of different lengths, so the keys are
+        // compared as hashes, always 32 bytes: the time taken reveals neither how much of a
+        // key was right nor how long the keys are. The loop never stops early, for the same reason.
         foreach (var entry in keys.CurrentValue)
         {
-            var configured = Encoding.UTF8.GetBytes(entry.Key);
-            if (CryptographicOperations.FixedTimeEquals(presentedBytes, configured))
+            var configuredHash = SHA256.HashData(Encoding.UTF8.GetBytes(entry.Key));
+            if (CryptographicOperations.FixedTimeEquals(presentedHash, configuredHash))
             {
                 match = entry;
             }

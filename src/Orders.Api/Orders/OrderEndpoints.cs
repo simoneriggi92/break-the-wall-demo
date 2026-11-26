@@ -4,7 +4,7 @@ namespace Orders.Api.Orders;
 
 public sealed record PlaceOrder(string? Product, int Quantity)
 {
-    public Dictionary<string, string[]> Errors()
+    public Dictionary<string, string[]> ValidationErrors()
     {
         var errors = new Dictionary<string, string[]>();
         if (string.IsNullOrWhiteSpace(Product))
@@ -33,7 +33,7 @@ public static class OrderEndpoints
         var orders = routes.MapGroup("/orders");
 
         orders.MapGet("/", (HttpContext context, OrderStore store) =>
-            TypedResults.Ok(store.List(context.GetApiClient().Name).Select(OrderView.From)));
+            Results.Ok(store.List(context.GetApiClient().Name).Select(OrderView.From)));
 
         orders.MapGet("/{id:guid}", (Guid id, HttpContext context, OrderStore store) =>
             store.Find(context.GetApiClient().Name, id) is { } order
@@ -42,13 +42,13 @@ public static class OrderEndpoints
 
         orders.MapPost("/", (PlaceOrder request, HttpContext context, OrderStore store) =>
         {
-            var errors = request.Errors();
+            var errors = request.ValidationErrors();
             if (errors.Count > 0)
             {
                 return Results.ValidationProblem(errors);
             }
 
-            var order = store.Place(context.GetApiClient().Name, request.Product!.Trim(), request.Quantity);
+            var order = store.Place(context.GetApiClient().Name, request.Product!, request.Quantity);
             return Results.Created($"/orders/{order.Id}", OrderView.From(order));
         });
 
