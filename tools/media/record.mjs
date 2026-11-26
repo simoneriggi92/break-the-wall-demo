@@ -10,8 +10,12 @@ import { join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { chromium } from 'playwright';
 import { compose } from './lib/compose.mjs';
+import { recordScreen } from './lib/screen.mjs';
 
 const SIZE = { width: 1280, height: 800 };
+// Each window lays out at 1280×800 but is drawn and recorded at twice the density, as on a Retina
+// screen: the media show one window at a time near full size, and a zoom on the page stays sharp.
+const DENSITY = 2;
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
@@ -33,16 +37,10 @@ await mkdir(rawDir, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome', headless: values.headless });
 const marks = [];
 
-/**
- * One window per side, each recording from the moment its page exists. That moment is taken as
- * the midpoint of newPage(), the call during which the recording starts: compose aligns the two
- * recordings on these instants.
- */
+/** One window per side; its recording starts once its first page is set, see `startRecording`. */
 async function openSide(options) {
-  const context = await browser.newContext({ viewport: SIZE, recordVideo: { dir: rawDir, size: SIZE }, ...options });
-  const before = Date.now();
-  const page = await context.newPage();
-  return { context, page, startedAt: Math.round((before + Date.now()) / 2) };
+  const context = await browser.newContext({ viewport: SIZE, deviceScaleFactor: DENSITY, ...options });
+  return { context, page: await context.newPage() };
 }
 
 const terminal = await openSide({});
@@ -64,6 +62,12 @@ await terminal.context.addInitScript(() => addEventListener('DOMContentLoaded', 
 }));
 await terminal.page.goto(values.terminal);
 await page.page.setContent('<!doctype html><title>Waiting for Break the Wall</title><body style="margin:0;background:#f4f1ea"></body>');
+
+// Each recording knows the instant of its first frame: compose aligns the two on these instants.
+const recordings = {
+  terminal: await recordScreen(terminal.page, join(rawDir, 'terminal.mp4')),
+  page: await recordScreen(page.page, join(rawDir, 'page.mp4')),
+};
 
 const sides = { terminal: terminal.page, page: page.page };
 const token = randomBytes(16).toString('hex');
@@ -153,13 +157,11 @@ async function selectText(target, text) {
 }
 
 async function stop() {
-  const videos = { terminal: terminal.page.video(), page: page.page.video() };
-  await terminal.context.close();
-  await page.context.close();
+  const videos = { terminal: await recordings.terminal.stop(), page: await recordings.page.stop() };
   await browser.close();
   const timeline = {
-    terminal: { video: relative(takeDir, await videos.terminal.path()), startedAt: terminal.startedAt },
-    page: { video: relative(takeDir, await videos.page.path()), startedAt: page.startedAt },
+    terminal: { video: relative(takeDir, videos.terminal), startedAt: recordings.terminal.startedAt },
+    page: { video: relative(takeDir, videos.page), startedAt: recordings.page.startedAt },
     marks,
   };
   await writeFile(join(takeDir, 'timeline.json'), `${JSON.stringify(timeline, null, 2)}\n`);

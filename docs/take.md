@@ -40,9 +40,9 @@ A take is one real Claude Code session in this repository, recorded for Break th
 
    > Next round, draw a Mermaid diagram of where the limiter sits in the request pipeline, next to ApiKeyMiddleware.
 
-   Send the round's answers, then watch the agent go on in the terminal. The next round shows the diagram in the page. Answer each later round as point 3 says, with no other side chat.
+   Send the round's answers, then watch the agent go on in the terminal. The next round shows the diagram in the page: fold the questions («) and the right column (») so it takes the whole width, stay on it a few seconds, then unfold both. Answer each later round as point 3 says, with no other side chat.
 6. **Hand over the spec.** When the agent says the grilling is done, type `/to-spec` in the terminal. If it asks where the spec goes, answer *a local file, as CLAUDE.md says*. If it asks to confirm the test seams, accept them. The spec opens in the page beside the terminal.
-7. **Remark on one unbacked statement.** First wait until the page has drawn the spec's structure: *Claude Code is writing the spec's structure…* gives way to the diagram. A remark made before that hides the diagram from the take. Then open *Backing* and choose one statement marked *Unbacked*: prefer a confident sentence about behaviour (a limit, a header, a status code) over a sentence of context. Select it and add a *Remark*:
+7. **Remark on one unbacked statement.** First wait until the page has drawn the spec's structure: *Claude Code is writing the spec's structure…* gives way to the diagram. A remark made before that hides the diagram from the take. Fold the index of the source, so the structure gets half the window, and take a few steps of its guide. Then open *Backing* and choose one statement marked *Unbacked*: prefer a confident sentence about behaviour (a limit, a header, a status code) over a sentence of context. Add a *Remark* on it, then close *Backing*, so the remark's panel does not cover the spec:
 
    > I never decided this: ask me.
 

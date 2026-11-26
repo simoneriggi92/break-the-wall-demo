@@ -1,0 +1,28 @@
+{
+  "takes": { "main": "../takes/take2x/take.mp4" },
+  "gif": {
+    "file": "break-the-wall.gif",
+    "width": 1000,
+    "view": "page",
+    "moments": [
+      { "view": "terminal", "start": 14.3, "end": 16.8, "caption": "Type /break-the-wall in Claude Code" },
+      { "start": 53.0, "end": 55.0, "caption": "The page opens beside the terminal" },
+      { "start": 86.8, "end": 89.8, "caption": "Answer one question at a time" },
+      { "start": 110.0, "end": 113.0, "caption": "Ask beside the question" },
+      { "start": 133.7, "end": 135.7, "caption": "Attach the reply to the answer" },
+      { "start": 151.4, "end": 153.9, "caption": "Send the answers" },
+      { "view": "terminal", "start": 155.0, "end": 157.0, "caption": "They return to the session" },
+      { "start": 251.0, "end": 254.5, "zoom": { "x": 240, "y": 60, "width": 800 }, "caption": "The next round draws its diagram" },
+      { "start": 532.4, "end": 535.4, "zoom": { "x": 80, "y": 150, "width": 880 }, "caption": "The spec opens as a structure" },
+      { "start": 547.2, "end": 549.7, "caption": "One statement has no backing" },
+      { "start": 562.5, "end": 565.5, "caption": "Remark on it: the agent asks again" },
+      { "start": 611.0, "end": 613.0, "caption": "A new round" },
+      { "start": 760.8, "end": 764.8, "caption": "Approve the revised spec" }
+    ]
+  },
+  "clips": [
+    { "file": "answer-one-question.webp", "view": "page", "width": 800, "moments": [{ "start": 86.8, "end": 92.8 }] },
+    { "file": "ask-beside-the-question.webp", "view": "page", "width": 800, "moments": [{ "start": 109.0, "end": 113.5 }, { "start": 131.2, "end": 133.7 }] },
+    { "file": "check-the-spec-then-approve.webp", "view": "page", "width": 800, "moments": [{ "start": 547.0, "end": 550.0 }, { "start": 562.5, "end": 565.5 }, { "start": 760.8, "end": 762.8 }] }
+  ]
+}

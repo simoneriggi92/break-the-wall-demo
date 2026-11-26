@@ -5,6 +5,9 @@ import { dirname, resolve } from 'node:path';
 const GIF_SECONDS = [25, 35];
 const CLIP_SECONDS = [5, 8];
 const VIEWS = ['both', 'terminal', 'page'];
+/** Each window's size as the recorder opens it; a zoom is given in these pixels, whatever the recording's density. */
+export const WINDOW = { width: 1280, height: 800 };
+const MIN_ZOOM_WIDTH = 320;
 
 /**
  * A cuts file: which moments of its takes make the heading GIF and each clip.
@@ -25,12 +28,39 @@ export async function readCuts(file) {
 /** The take a moment is from: the one it names, or the first. */
 export const takeOf = (cuts, moment) => moment.take ?? cuts.takes[0].name;
 
+/** What a moment shows: its own view, else its medium's, else both windows side by side. */
+export const viewOf = (medium, moment) => moment.view ?? medium.view ?? 'both';
+
+/** A zoom keeps the window's proportions, so its height follows from its width. */
+export const zoomHeight = (zoom) => (zoom.width * WINDOW.height) / WINDOW.width;
+
 /** Throws the first rule the cuts break, in words the person can act on. `seconds` maps each take's name to its length. */
 export function checkCuts(cuts, seconds) {
   const order = cuts.takes.map((take) => take.name);
   checkMedium(cuts.gif, { cuts, order, seconds, captions: true, bounds: GIF_SECONDS, name: 'The GIF', rule: 'it must last' });
   for (const clip of cuts.clips) {
     checkMedium(clip, { cuts, order, seconds, captions: false, bounds: CLIP_SECONDS, name: clip.file, rule: 'a clip must last' });
+  }
+}
+
+/** A medium has one frame size: all its moments show one window, or all show both. */
+function checkFraming(medium, moment, at) {
+  const view = viewOf(medium, moment);
+  if (!VIEWS.includes(view)) {
+    throw new Error(`${at}: view must be "both", "terminal" or "page".`);
+  }
+  if ((view === 'both') !== (viewOf(medium, medium.moments[0]) === 'both')) {
+    throw new Error(`${at}: view "both" and views of one window cannot share a medium, which has one frame size.`);
+  }
+  if (moment.zoom === undefined) return;
+  if (view === 'both') {
+    throw new Error(`${at}: a zoom frames one window: set its view to "terminal" or "page".`);
+  }
+  const { x, y, width } = moment.zoom;
+  const inside = [x, y, width].every((n) => typeof n === 'number' && n >= 0)
+    && width >= MIN_ZOOM_WIDTH && x + width <= WINDOW.width && y + zoomHeight(moment.zoom) <= WINDOW.height;
+  if (!inside) {
+    throw new Error(`${at}: the zoom must lie inside the ${WINDOW.width}×${WINDOW.height} window, with a width of at least ${MIN_ZOOM_WIDTH}.`);
   }
 }
 
@@ -70,6 +100,7 @@ function checkMedium(medium, { cuts, order, seconds: takeSeconds, captions, boun
     if (captions && (typeof moment.caption !== 'string' || moment.caption.trim() === '')) {
       throw new Error(`${at}: a GIF moment needs a caption.`);
     }
+    checkFraming(medium, moment, at);
   });
   const seconds = length(medium.moments);
   if (seconds < bounds[0] || seconds > bounds[1]) {

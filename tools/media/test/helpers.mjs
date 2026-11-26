@@ -10,13 +10,18 @@ const here = new URL('..', import.meta.url).pathname;
 export const tempDir = () => mkdtemp(join(tmpdir(), 'btw-media-'));
 
 /** A synthetic recording: a moving test pattern, so every frame differs as a real take's do. */
-export async function syntheticVideo(file, { seconds, width, height, fps = 25, color }) {
+export async function syntheticVideo(file, { seconds, width, height, fps = 25, color, stripes }) {
   // A plain colour tells this recording apart from another in the output. A small pattern still
   // moves in its bottom-right corner, as a real take always moves: frames that never change make
   // a still WebP, not an animation.
   const pattern = `testsrc2=size=${width}x${height}:rate=${fps}:duration=${seconds}`;
-  const graph = color
-    ? `color=c=${color}:size=${width}x${height}:rate=${fps}:duration=${seconds}[bg];testsrc2=size=320x200:rate=${fps}:duration=${seconds}[fg];[bg][fg]overlay=W-w:H-h[out]`
+  // Stripes, equal and side by side, tell apart which part of the take a frame was cut from.
+  const plain = (c, w) => `color=c=${c}:size=${w}x${height}:rate=${fps}:duration=${seconds}`;
+  const background = stripes
+    ? `${stripes.map((c, i) => `${plain(c, width / stripes.length)}[c${i}]`).join(';')};${stripes.map((_, i) => `[c${i}]`).join('')}hstack=inputs=${stripes.length}[bg]`
+    : color ? `${plain(color, width)}[bg]` : '';
+  const graph = background
+    ? `${background};testsrc2=size=320x200:rate=${fps}:duration=${seconds}[fg];[bg][fg]overlay=W-w:H-h[out]`
     : `${pattern}[out]`;
   await run('ffmpeg', [
     '-v', 'error', '-filter_complex', graph, '-map', '[out]',

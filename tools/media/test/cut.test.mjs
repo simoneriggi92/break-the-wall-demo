@@ -88,3 +88,70 @@ for (const [name, change, reason] of refusals) {
     await assert.rejects(access(out));
   });
 }
+
+test('each moment frames one window at full scale, or a region of it, so the README shows it legibly', async () => {
+  // Terminal: red | yellow. Page: blue | green. Each window 1280×800, as the recorder composes them.
+  await syntheticVideo(join(dir, 'stripes.mp4'), { seconds: 40, width: 2560, height: 800, stripes: ['red', 'yellow', 'blue', 'green'] });
+  const cuts = join(dir, 'framed.json');
+  const out = join(dir, 'framed');
+  await writeJson(cuts, {
+    takes: { main: 'stripes.mp4' },
+    gif: {
+      file: 'framed.gif',
+      width: 1280,
+      view: 'page',
+      moments: [
+        { view: 'terminal', start: 0, end: 10, caption: 'In the terminal' },
+        { start: 10, end: 20, caption: 'In the page' },
+        { start: 20, end: 30, zoom: { x: 640, y: 0, width: 640 }, caption: 'A close-up of the page' },
+      ],
+    },
+    clips: [{ file: 'close.webp', view: 'page', width: 800, moments: [{ start: 30, end: 36, zoom: { x: 640, y: 400, width: 640 } }] }],
+  });
+
+  const result = await script('cut.mjs', [cuts, '--out', out]);
+
+  assert.equal(result.code, 0, result.stderr);
+  const gif = await probe(join(out, 'framed.gif'));
+  assert.deepEqual([gif.width, gif.height], [1280, 800]);
+  const isColor = ([r, g, b], [er, eg, eb]) => Math.abs(r - er) < 60 && Math.abs(g - eg) < 60 && Math.abs(b - eb) < 60;
+  const terminal = await cornerColor(join(out, 'framed.gif'), 5);
+  const page = await cornerColor(join(out, 'framed.gif'), 15);
+  const zoomed = await cornerColor(join(out, 'framed.gif'), 25);
+  assert.ok(isColor(terminal, [255, 0, 0]), `terminal moment shows ${terminal}`);
+  assert.ok(isColor(page, [0, 0, 255]), `page moment shows ${page}`);
+  assert.ok(isColor(zoomed, [0, 128, 0]), `zoomed moment shows ${zoomed}`);
+  const clip = await webpInfo(join(out, 'close.webp'));
+  assert.deepEqual([clip.width, clip.height], [800, 500]);
+});
+
+const framingRefusals = [
+  ['a moment of both windows among moments of one', (c) => { c.gif.moments[1].view = 'both'; }, 'framed.gif, moment 2: view "both" and views of one window cannot share a medium, which has one frame size.'],
+  ['a zoom past its window', (c) => { c.gif.moments[2].zoom = { x: 900, y: 0, width: 640 }; }, 'framed.gif, moment 3: the zoom must lie inside the 1280×800 window, with a width of at least 320.'],
+  ['a zoom on both windows', (c) => { c.gif.view = 'both'; delete c.gif.moments[0].view; }, 'framed.gif, moment 3: a zoom frames one window: set its view to "terminal" or "page".'],
+];
+
+for (const [name, change, reason] of framingRefusals) {
+  test(`a cuts file with ${name} is refused with its reason`, async () => {
+    const cuts = {
+      takes: { main: 'take.mp4' },
+      gif: {
+        file: 'framed.gif', width: 1280, view: 'page',
+        moments: [
+          { view: 'terminal', start: 0, end: 10, caption: 'One' },
+          { start: 10, end: 20, caption: 'Two' },
+          { start: 20, end: 30, zoom: { x: 640, y: 0, width: 640 }, caption: 'Three' },
+        ],
+      },
+      clips: [],
+    };
+    change(cuts);
+    const file = join(dir, `framing-${name.replaceAll(' ', '-')}.json`);
+    await writeJson(file, cuts);
+
+    const result = await script('cut.mjs', [file, '--out', join(dir, `framing-out-${name.replaceAll(' ', '-')}`)]);
+
+    assert.equal(result.code, 1);
+    assert.equal(result.stderr.trim(), reason);
+  });
+}

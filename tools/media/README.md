@@ -16,11 +16,11 @@ On the recording machine, with Homebrew:
 
 ```sh
 brew install ffmpeg ttyd webp tmux
-cd tools/media && npm ci && npx playwright install ffmpeg
+cd tools/media && npm ci
 ```
 
 - **Chrome:** the recorder drives the installed Google Chrome, so Playwright downloads no browser.
-- **Playwright's ffmpeg:** Playwright records video with its own small ffmpeg build. `npx playwright install ffmpeg` fetches it.
+- **Density:** each window lays out at 1280×800 and is recorded at twice the density, 2560×1600, as on a Retina screen. Playwright's own video captures a page at its CSS size, so the recorder takes 20 screenshots a second instead and pipes them to Homebrew's ffmpeg.
 - **Homebrew's ffmpeg:** the bottle has no caption filter and no WebP encoder. The captions are drawn by the browser instead, and the clips are animated by `img2webp`, from `webp`.
 
 None of these tools is a dependency of Break the Wall.
@@ -76,9 +76,10 @@ The script checks the cuts file before it writes anything, and refuses it with t
 
 Other rules for the cuts file:
 
-- **Views:** `view` keeps `both` halves, the `terminal` or the `page`.
+- **Views:** `view` keeps `both` halves, the `terminal` or the `page`. A moment can set its own `view`, so the GIF shows one window at a time at full size: the README is about 1000 px wide, and two windows side by side would show each at half that.
+- **Zooms:** a moment can frame a region of its window, `"zoom": { "x": 240, "y": 60, "width": 800 }`, in the window's 1280×800 pixels, its height following the window's proportions. Recorded at twice the density, the region stays sharp: a diagram or the spec's structure, close up.
 - **Several takes:** a moment from a take other than the first names it with `"take"`.
-- **Example:** [cuts/trial.json](../../cuts/trial.json) cuts the trial takes of the whole loop.
+- **Example:** [cuts/take2x.json](../../cuts/take2x.json) cuts the trial take of the whole loop.
 
 ## Tests
 
