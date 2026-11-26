@@ -4,8 +4,6 @@ namespace Orders.Api.Orders;
 
 public sealed record Order(Guid Id, string Client, string Product, int Quantity, DateTimeOffset PlacedAt);
 
-// In memory on purpose: the demo is about the API's edges, not its storage, and a
-// process restart emptying the orders is an acceptable cost for a project nobody deploys.
 public sealed class OrderStore(TimeProvider clock)
 {
     private readonly ConcurrentDictionary<Guid, Order> orders = new();
