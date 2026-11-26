@@ -480,3 +480,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Takes and the media cut from them: large, and redone from the cuts files.
+/takes/
+/media/

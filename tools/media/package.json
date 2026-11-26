@@ -1,0 +1,15 @@
+{
+  "name": "break-the-wall-demo-media",
+  "private": true,
+  "type": "module",
+  "description": "Records a take of a Claude Code session beside Break the Wall's page, and cuts it into the README's media.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test 'test/*.test.mjs'"
+  },
+  "dependencies": {
+    "playwright": "1.65.0"
+  }
+}
