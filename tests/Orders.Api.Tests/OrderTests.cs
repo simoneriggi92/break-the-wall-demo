@@ -1,0 +1,79 @@
+using System.Net;
+using System.Net.Http.Json;
+
+namespace Orders.Api.Tests;
+
+public sealed class OrderTests : IDisposable
+{
+    private sealed record PlacedOrder(Guid Id, string Product, int Quantity, DateTimeOffset PlacedAt);
+
+    // A fresh host per test, so orders placed by one test never show up in another.
+    private readonly OrdersApiFactory factory = new();
+
+    public void Dispose() => factory.Dispose();
+
+    [Fact]
+    public async Task A_placed_order_can_be_read_back()
+    {
+        var client = factory.CreateClient(OrdersApiFactory.AcmeKey);
+
+        var placed = await client.PostAsJsonAsync("/orders", new { product = "Espresso beans", quantity = 3 });
+
+        Assert.Equal(HttpStatusCode.Created, placed.StatusCode);
+        var location = placed.Headers.Location ?? throw new InvalidDataException("no Location header");
+
+        var read = await client.GetFromJsonAsync<PlacedOrder>(location);
+
+        Assert.NotNull(read);
+        Assert.Equal("Espresso beans", read.Product);
+        Assert.Equal(3, read.Quantity);
+    }
+
+    [Theory]
+    [InlineData(null, 1)]
+    [InlineData("  ", 1)]
+    [InlineData("Espresso beans", 0)]
+    [InlineData("Espresso beans", -2)]
+    public async Task An_invalid_order_is_refused_and_not_placed(string? product, int quantity)
+    {
+        var client = factory.CreateClient(OrdersApiFactory.AcmeKey);
+
+        var placed = await client.PostAsJsonAsync("/orders", new { product, quantity });
+        var listed = await client.GetFromJsonAsync<List<PlacedOrder>>("/orders");
+
+        Assert.Equal(HttpStatusCode.BadRequest, placed.StatusCode);
+        Assert.Empty(listed ?? throw new InvalidDataException());
+    }
+
+    [Fact]
+    public async Task One_clients_orders_are_invisible_to_another()
+    {
+        var acme = factory.CreateClient(OrdersApiFactory.AcmeKey);
+        var globex = factory.CreateClient(OrdersApiFactory.GlobexKey);
+        var placed = await acme.PostAsJsonAsync("/orders", new { product = "Filter papers", quantity = 1 });
+        var location = placed.Headers.Location ?? throw new InvalidDataException("no Location header");
+
+        var read = await globex.GetAsync(location);
+        var listed = await globex.GetFromJsonAsync<List<PlacedOrder>>("/orders");
+
+        Assert.Equal(HttpStatusCode.NotFound, read.StatusCode);
+        Assert.Empty(listed ?? throw new InvalidDataException());
+    }
+
+    [Fact]
+    public async Task A_cancelled_order_is_gone_and_only_its_owner_can_cancel_it()
+    {
+        var acme = factory.CreateClient(OrdersApiFactory.AcmeKey);
+        var globex = factory.CreateClient(OrdersApiFactory.GlobexKey);
+        var placed = await acme.PostAsJsonAsync("/orders", new { product = "Grinder", quantity = 1 });
+        var location = placed.Headers.Location ?? throw new InvalidDataException("no Location header");
+
+        var byAnother = await globex.DeleteAsync(location);
+        var byOwner = await acme.DeleteAsync(location);
+        var readAfter = await acme.GetAsync(location);
+
+        Assert.Equal(HttpStatusCode.NotFound, byAnother.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, byOwner.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, readAfter.StatusCode);
+    }
+}
