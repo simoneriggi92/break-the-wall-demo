@@ -12,7 +12,7 @@ It is a small ASP.NET Core minimal API on .NET 10. Clients identify themselves w
 
 The ticket says what is wrong and leaves the decisions open: the limits and whether they differ per key, the counting window, where the counts live, which endpoints count, and what a refused client receives. Those are what the grilling is for.
 
-The person's choices for a recorded take are written down in [docs/take.md](docs/take.md), so every take tells the same story whatever words the agent uses. How a take is recorded and cut into the media is in [tools/media/README.md](tools/media/README.md).
+The person's choices for a recorded take are written down in [docs/take.md](docs/take.md), so every take tells the same story whatever words the agent uses. How a take is recorded and cut into the media is in [tools/media/README.md](tools/media/README.md). The launch video and the README's current media are cut from a screen recording with Remotion, in [tools/video/README.md](tools/video/README.md).
 
 ## The API
 

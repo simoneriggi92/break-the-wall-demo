@@ -1,0 +1,11 @@
+node_modules
+dist
+.DS_Store
+.env
+
+# Rendered videos and GIFs: redone from src/cut.ts.
+out
+
+# The proxy of the screen recording: large, and redone by `npm run proxy` from the recording,
+# which is never kept in the repository (the page's address in it carries a session token).
+public/recording.mp4
